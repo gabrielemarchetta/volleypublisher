@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VBCoach Publisher — @joel86volley</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #ffffff12;
+    --accent: #ff4d6d;
+    --accent2: #ffd60a;
+    --accent3: #4cc9f0;
+    --text: #f0f0f5;
+    --muted: #6b6b80;
+    --success: #06d6a0;
+    --warning: #ffd60a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    backdrop-filter: blur(20px);
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 12px var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .user-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: 13px; color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .user-badge span { color: var(--accent3); }
+
+  /* NAV TABS */
+  nav {
+    display: flex; gap: 2px;
+    padding: 0 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  nav button {
+    background: none; border: none; color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 14px 20px; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav button:hover { color: var(--text); }
+  nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN */
+  main { padding: 32px; max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; letter-spacing: 3px;
+    color: var(--muted); text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* STAT */
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; line-height: 1; color: var(--text); }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 4px; letter-spacing: 1px; }
+
+  /* FORM ELEMENTS */
+  textarea, input[type="text"], input[type="date"], input[type="time"], select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    padding: 12px 14px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  textarea:focus, input:focus, select:focus { border-color: var(--accent3); }
+  label { font-size: 12px; color: var(--muted); letter-spacing: 1px; margin-bottom: 6px; display: block; }
+
+  /* BUTTONS */
+  .btn {
+    border: none; border-radius: 8px;
+    padding: 12px 24px; cursor: pointer;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    letter-spacing: 1px; text-transform: uppercase;
+    transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #ff2d50; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(255,77,109,0.3); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--accent3); color: var(--accent3); }
+  .btn-success { background: var(--success); color: #000; }
+  .btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; }
+
+  /* PILLS */
+  .pill {
+    display: inline-block; border-radius: 4px;
+    padding: 3px 10px; font-size: 10px;
+    font-family: 'DM Mono', monospace; letter-spacing: 1px;
+  }
+  .pill-green { background: #06d6a022; color: var(--success); border: 1px solid #06d6a044; }
+  .pill-red { background: #ff4d6d22; color: var(--accent); border: 1px solid #ff4d6d44; }
+  .pill-yellow { background: #ffd60a22; color: var(--warning); border: 1px solid #ffd60a44; }
+  .pill-blue { background: #4cc9f022; color: var(--accent3); border: 1px solid #4cc9f044; }
+
+  /* PREVIEW PHONE */
+  .phone-wrap { display: flex; justify-content: center; padding: 20px 0; }
+  .phone {
+    width: 260px;
+    background: #000;
+    border-radius: 36px;
+    border: 6px solid #2a2a2a;
+    overflow: hidden;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+  }
+  .phone-top { background: #1a1a1a; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .phone-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .phone-username { font-size: 11px; font-weight: 600; color: #fff; }
+  .phone-img {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 60px; position: relative; overflow: hidden;
+  }
+  .phone-img::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(0,0,0,0.4));
+  }
+  .phone-caption { background: #000; padding: 10px 12px; }
+  .phone-caption-text { font-size: 10px; color: #ccc; line-height: 1.4; max-height: 60px; overflow: hidden; }
+
+  /* STATUS LOG */
+  #status-log {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px;
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    min-height: 80px; max-height: 200px; overflow-y: auto;
+    line-height: 1.8;
+  }
+  .log-line { display: flex; gap: 10px; }
+  .log-time { color: var(--muted); }
+  .log-ok { color: var(--success); }
+  .log-err { color: var(--accent); }
+  .log-info { color: var(--accent3); }
+
+  /* CALENDAR */
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .cal-day {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 8px; text-align: center;
+  }
+  .cal-day.has-post { border-color: #4cc9f044; }
+  .cal-day-name { font-size: 10px; color: var(--muted); margin-bottom: 6px; letter-spacing: 1px; }
+  .cal-day-icon { font-size: 20px; }
+  .cal-day-info { font-size: 9px; color: var(--accent3); margin-top: 4px; }
+
+  /* HASHTAG CHIPS */
+  .chip-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip {
+    background: #1f6feb22; border: 1px solid #1f6feb44;
+    color: #58a6ff; border-radius: 4px;
+    padding: 3px 8px; font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .chip:hover { background: #1f6feb44; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 32px; right: 32px; z-index: 9999;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 20px;
+    font-size: 13px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transform: translateY(20px); opacity: 0;
+    transition: all 0.3s; pointer-events: none;
+  }
+  #toast.show { transform: none; opacity: 1; }
+
+  /* AI SECTION */
+  .ai-card {
+    background: linear-gradient(135deg, #12121a, #1a1226);
+    border: 1px solid #ff4d6d22;
+    border-radius: 12px; padding: 20px; margin-bottom: 12px;
+  }
+  .ai-thinking { display: flex; gap: 4px; align-items: center; }
+  .ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: blink 1.2s infinite; }
+  .ai-dot:nth-child(2) { animation-delay: 0.2s; }
+  .ai-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%,100%{opacity:0.2} 50%{opacity:1} }
+
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    VBCOACH PUBLISHER
+  </div>
+  <div class="user-badge">
+    📱 <span>@joel86volley</span> · Creator
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showPanel('pubblica')">Pubblica</button>
+  <button onclick="showPanel('ai')">AI Content</button>
+  <button onclick="showPanel('calendario')">Calendario</button>
+  <button onclick="showPanel('account')">Account</button>
+</nav>
+
+<main>
+
+  <!-- PUBBLICA -->
+  <div class="panel active" id="panel-pubblica">
+    <div class="grid2" style="align-items:start">
+
+      <!-- LEFT: FORM -->
+      <div>
+        <div class="card">
+          <div class="card-title">Crea post</div>
+
+          <div style="margin-bottom:16px">
+            <label>TIPO DI CONTENUTO</label>
+            <select id="post-type" onchange="updateEmoji()">
+              <option value="🏐">🏐 Tecnica volleyball</option>
+              <option value="💪">💪 Motivazione</option>
+              <option value="🎯">🎯 Esercizio / Drill</option>
+              <option value="🛒">🛒 Prodotto / Promo</option>
+              <option value="📊">📊 Stats / Risultati</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label>CAPTION</label>
+            <textarea id="caption" rows="8" placeholder="Scrivi la tua caption qui..." oninput="updatePreview()">🏐 TECNICA DEL GIORNO
+
+Il bagher perfetto si costruisce su 3 elementi:
+
+1️⃣ Posizione bassa pre-ricezione
+2️⃣ Avambracci paralleli al suolo  
+3️⃣ Trasferimento del peso in avanti
+
+Quanti di voi ci lavorano ogni allenamento? 👇
+
+#pallavolo #volleyball #coachlife #allenamento #volley #sport #italia #atletismo #tecnica</textarea>
+          </div>
+
+          <div style="margin-bottom:16px">
+            <label>HASHTAG RAPIDI (clicca per aggiungere)</label>
+            <div class="chip-wrap">
+              <div class="chip" onclick="addHashtag('#pallavolo')">#pallavolo</div>
+              <div class="chip" onclick="addHashtag('#volleyball')">#volleyball</div>
+              <div class="chip" onclick="addHashtag('#coachlife')">#coachlife</div>
+              <div class="chip" onclick="addHashtag('#allenamento')">#allenamento</div>
+              <div class="chip" onclick="addHashtag('#volley')">#volley</div>
+              <div class="chip" onclick="addHashtag('#sport')">#sport</div>
+              <div class="chip" onclick="addHashtag('#italia')">#italia</div>
+              <div class="chip" onclick="addHashtag('#motivazione')">#motivazione</div>
+              <div class="chip" onclick="addHashtag('#atleta')">#atleta</div>
+              <div class="chip" onclick="addHashtag('#teamwork')">#teamwork</div>
+            </div>
+          </div>
+
+          <div class="grid2" style="margin-bottom:16px">
+            <div>
+              <label>IMMAGINE / VIDEO URL</label>
+              <input type="text" id="image-url" placeholder="https://... (link immagine pubblica)" oninput="updatePreview()">
+            </div>
+            <div>
+              <label>TIPO MEDIA</label>
+              <select id="media-type">
+                <option value="IMAGE">🖼️ Immagine</option>
+                <option value="REELS">🎬 Reels</option>
+                <option value="CAROUSEL">📚 Carosello</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="publishNow()" id="btn-publish">
+              📤 Pubblica ora
+            </button>
+            <button class="btn btn-secondary" onclick="copyCaption()">
+              📋 Copia caption
+            </button>
+          </div>
+        </div>
+
+        <!-- STATUS LOG -->
+        <div class="card">
+          <div class="card-title">Log pubblicazione</div>
+          <div id="status-log">
+            <div class="log-line"><span class="log-time">--:--</span><span class="log-info">Sistema pronto. Inserisci i dati e pubblica.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW -->
+      <div>
+        <div class="card">
+          <div class="card-title">Preview Instagram</div>
+          <div class="phone-wrap">
+            <div class="phone">
+              <div class="phone-top">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="phone-avatar">🏐</div>
+                  <div>
+                    <div class="phone-username">joel86volley</div>
+                    <div style="font-size:9px;color:#888">Segui</div>
+                  </div>
+                </div>
+                <div style="color:#888;font-size:16px">···</div>
+              </div>
+              <div class="phone-img" id="preview-img">
+                <span id="preview-emoji" style="position:relative;z-index:1">🏐</span>
+              </div>
+              <div class="phone-caption">
+                <div class="phone-caption-text" id="preview-caption">🏐 TECNICA DEL GIORNO...</div>
+              </div>
+              <div style="background:#000;padding:8px 12px;display:flex;gap:14px;color:#888;font-size:18px">
+                ♡ 🗨️ ✈️
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Orari ottimali</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surface2);border-radius:8px">
+              <div>
+                <div style="font-size:13px">Martedì</div>
+                <div style="font-size:11px;color:var(--muted)">Contenuto tecnico</div>
+              </div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent3)">18:30</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px;background:var(--surface2);border-radius:8px">
+              <div>
+                <div style="font-size:13px">Venerdì</div>
+                <div style="font-size:11px;color:var(--muted)">Motivazione / Reel</div>
+              </div>
+              <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent)">20:00</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI CONTENT -->
+  <div class="panel" id="panel-ai">
+    <div class="card">
+      <div class="card-title">AI Content Generator</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Descrivi il contenuto che vuoi e l'AI genera la caption perfetta per il tuo pubblico pallavolo.</p>
+
+      <div style="margin-bottom:12px">
+        <label>ARGOMENTO DEL POST</label>
+        <input type="text" id="ai-topic" placeholder="Es: esercizio per migliorare il servizio, motivazione per gara importante...">
+      </div>
+      <div class="grid2" style="margin-bottom:16px">
+        <div>
+          <label>TONO</label>
+          <select id="ai-tone">
+            <option>Professionale da coach</option>
+            <option>Motivazionale e energico</option>
+            <option>Tecnico e didattico</option>
+            <option>Amichevole e vicino ai ragazzi</option>
+          </select>
+        </div>
+        <div>
+          <label>TIPO POST</label>
+          <select id="ai-format">
+            <option>Post singolo con lista</option>
+            <option>Reel motivazionale</option>
+            <option>Carosello step-by-step</option>
+            <option>Post con domanda al pubblico</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="generateCaption()" id="btn-generate">
+        ✨ Genera caption con AI
+      </button>
+    </div>
+
+    <div class="ai-card" id="ai-result" style="display:none">
+      <div class="card-title" style="color:var(--accent)">Caption generata</div>
+      <div id="ai-output" style="font-size:13px;line-height:1.8;white-space:pre-wrap;color:var(--text)"></div>
+      <div style="margin-top:16px;display:flex;gap:8px">
+        <button class="btn btn-success" onclick="useCaption()">✓ Usa questa caption</button>
+        <button class="btn btn-secondary" onclick="generateCaption()">↻ Rigenera</button>
+      </div>
+    </div>
+
+    <!-- PIANO EDITORIALE -->
+    <div class="card" style="margin-top:8px">
+      <div class="card-title">Piano editoriale — prossime 4 settimane</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent3)">
+          <div style="font-size:11px;color:var(--accent3);letter-spacing:1px;margin-bottom:6px">SETTIMANA 1</div>
+          <div style="font-size:12px;color:var(--muted)">📱 Mar 18:30 · Tecnica bagher — Carosello step-by-step</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">📱 Ven 20:00 · Citazione motivazionale stagione — Reel</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent)">
+          <div style="font-size:11px;color:var(--accent);letter-spacing:1px;margin-bottom:6px">SETTIMANA 2</div>
+          <div style="font-size:12px;color:var(--muted)">📱 Mar 18:30 · Review ginocchiera (link acquisto) — Post</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">📱 Ven 20:00 · Dietro le quinte allenamento — Reel</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--accent2)">
+          <div style="font-size:11px;color:var(--accent2);letter-spacing:1px;margin-bottom:6px">SETTIMANA 3</div>
+          <div style="font-size:12px;color:var(--muted)">📱 Mar 18:30 · Esercizio attacco step-by-step — Carosello</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">📱 Ven 20:00 · Risultati e testimonianze atleti — Post</div>
+        </div>
+        <div style="padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--success)">
+          <div style="font-size:11px;color:var(--success);letter-spacing:1px;margin-bottom:6px">SETTIMANA 4</div>
+          <div style="font-size:12px;color:var(--muted)">📱 Mar 18:30 · FAQ pallavolo (domande followers) — Carosello</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">📱 Ven 20:00 · Promo kit allenamento (e-commerce) — Post</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALENDARIO -->
+  <div class="panel" id="panel-calendario">
+    <div class="card">
+      <div class="card-title">Settimana corrente</div>
+      <div class="cal-grid">
+        <div class="cal-day"><div class="cal-day-name">LUN</div><div class="cal-day-icon">—</div></div>
+        <div class="cal-day has-post"><div class="cal-day-name">MAR</div><div class="cal-day-icon">📱</div><div class="cal-day-info">18:30<br>Tecnica</div></div>
+        <div class="cal-day"><div class="cal-day-name">MER</div><div class="cal-day-icon">—</div></div>
+        <div class="cal-day"><div class="cal-day-name">GIO</div><div class="cal-day-icon">—</div></div>
+        <div class="cal-day has-post"><div class="cal-day-name">VEN</div><div class="cal-day-icon">📱</div><div class="cal-day-info">20:00<br>Motiv.</div></div>
+        <div class="cal-day"><div class="cal-day-name">SAB</div><div class="cal-day-icon">—</div></div>
+        <div class="cal-day"><div class="cal-day-name">DOM</div><div class="cal-day-icon">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Storico pubblicazioni</div>
+      <div id="post-history">
+        <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">
+          Nessun post pubblicato ancora. I post appariranno qui dopo la pubblicazione.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACCOUNT -->
+  <div class="panel" id="panel-account">
+    <div class="card">
+      <div class="card-title">Configurazione token Instagram</div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Il token è già configurato per <strong>@joel86volley</strong>. Puoi aggiornarlo qui se scade.</p>
+      <div style="margin-bottom:16px">
+        <label>ACCESS TOKEN</label>
+        <input type="text" id="token-input" placeholder="Incolla qui il nuovo token (inizia con IGAA...)">
+      </div>
+      <div style="margin-bottom:16px">
+        <label>INSTAGRAM USER ID</label>
+        <input type="text" id="user-id-input" value="17841400406443635" placeholder="ID numerico account">
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="saveToken()">💾 Salva configurazione</button>
+        <button class="btn btn-secondary" onclick="testConnection()">🔌 Testa connessione</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Stato account</div>
+      <div class="grid3">
+        <div><div class="stat-num" style="font-size:28px" id="stat-account">@joel86volley</div><div class="stat-label">Account collegato</div></div>
+        <div><div class="stat-num" id="stat-posts">—</div><div class="stat-label">Post pubblicati</div></div>
+        <div><div class="stat-num" id="stat-status" style="color:var(--success)">●</div><div class="stat-label">Stato API</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚠️ Note importanti</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.8">
+        <p>• Il token ha durata di <strong style="color:var(--text)">60 giorni</strong>. Ricorda di rinnovarlo prima della scadenza.</p>
+        <p>• Per pubblicare immagini serve un <strong style="color:var(--text)">URL pubblico</strong> dell'immagine (Cloudinary, Google Drive pubblico, ecc.)</p>
+        <p>• I Reels richiedono un video con durata minima di <strong style="color:var(--text)">3 secondi</strong></p>
+        <p>• Instagram permette max <strong style="color:var(--text)">50 post al giorno</strong> via API (nessun problema per 2/settimana)</p>
+        <p>• Il token attuale: <span id="token-preview" style="color:var(--accent3);font-family:'DM Mono',monospace;font-size:11px">IGAAU0tpm74c1... (configurato)</span></p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIG
+// ============================================================
+const CONFIG = {
+  token: 'IGAAU0tpm74c1BZAFptT3Rzdm4tMzFsWVcwalA4NURTVHNmX29fZAVpuSGlNUmlITW9keFM1Y0ItY3M1emdsWGNvZA2pZAbVF0c3d3ZAk9OSy1XbWVLLUlERXJ3aHZAYWVh2OUZAPcnlLOERXYk1LcVFsaU5qQmRFanE2ZAmQ5M3hsV2hBZAwZDZD',
+  userId: '17841400406443635',
+  postCount: 0,
+};
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ============================================================
+// PREVIEW
+// ============================================================
+function updatePreview() {
+  const caption = document.getElementById('caption').value;
+  document.getElementById('preview-caption').textContent = caption.substring(0, 120) + (caption.length > 120 ? '...' : '');
+  const imgUrl = document.getElementById('image-url').value;
+  const previewImg = document.getElementById('preview-img');
+  if (imgUrl) {
+    previewImg.style.backgroundImage = `url(${imgUrl})`;
+    previewImg.style.backgroundSize = 'cover';
+    previewImg.style.backgroundPosition = 'center';
+    document.getElementById('preview-emoji').style.display = 'none';
+  } else {
+    previewImg.style.backgroundImage = '';
+    document.getElementById('preview-emoji').style.display = 'block';
+  }
+}
+
+function updateEmoji() {
+  const sel = document.getElementById('post-type');
+  const emoji = sel.value;
+  document.getElementById('preview-emoji').textContent = emoji;
+}
+
+function addHashtag(tag) {
+  const ta = document.getElementById('caption');
+  if (!ta.value.includes(tag)) {
+    ta.value += (ta.value.endsWith('\n') ? '' : '\n') + tag;
+    updatePreview();
+  }
+}
+
+function copyCaption() {
+  const text = document.getElementById('caption').value;
+  navigator.clipboard.writeText(text).then(() => showToast('✓ Caption copiata negli appunti!', 'success'));
+}
+
+// ============================================================
+// PUBLISH TO INSTAGRAM
+// ============================================================
+async function publishNow() {
+  const caption = document.getElementById('caption').value.trim();
+  const imageUrl = document.getElementById('image-url').value.trim();
+  const mediaType = document.getElementById('media-type').value;
+
+  if (!caption) { showToast('⚠️ Scrivi una caption prima di pubblicare', 'error'); return; }
+  if (!imageUrl && mediaType !== 'CAROUSEL') { showToast('⚠️ Inserisci l\'URL di un\'immagine pubblica', 'error'); return; }
+
+  const btn = document.getElementById('btn-publish');
+  btn.disabled = true;
+  btn.textContent = '⏳ Pubblicazione...';
+
+  log('info', 'Avvio pubblicazione su @joel86volley...');
+  log('info', 'Step 1: Caricamento media container...');
+
+  try {
+    // Step 1: Create media container
+    const containerParams = new URLSearchParams({
+      caption: caption,
+      access_token: CONFIG.token,
+    });
+
+    if (mediaType === 'REELS') {
+      containerParams.append('media_type', 'REELS');
+      containerParams.append('video_url', imageUrl);
+    } else {
+      containerParams.append('image_url', imageUrl);
+    }
+
+    const containerRes = await fetch(
+      `https://graph.facebook.com/v19.0/${CONFIG.userId}/media`,
+      { method: 'POST', body: containerParams }
+    );
+    const containerData = await containerRes.json();
+
+    if (containerData.error) {
+      log('err', `Errore container: ${containerData.error.message}`);
+      showToast('❌ Errore: ' + containerData.error.message, 'error');
+      btn.disabled = false; btn.textContent = '📤 Pubblica ora';
+      return;
+    }
+
+    const containerId = containerData.id;
+    log('ok', `Container creato: ${containerId}`);
+    log('info', 'Step 2: Pubblicazione post...');
+
+    // Step 2: Publish
+    const publishParams = new URLSearchParams({
+      creation_id: containerId,
+      access_token: CONFIG.token,
+    });
+
+    const publishRes = await fetch(
+      `https://graph.facebook.com/v19.0/${CONFIG.userId}/media_publish`,
+      { method: 'POST', body: publishParams }
+    );
+    const publishData = await publishRes.json();
+
+    if (publishData.error) {
+      log('err', `Errore pubblicazione: ${publishData.error.message}`);
+      showToast('❌ Errore: ' + publishData.error.message, 'error');
+    } else {
+      log('ok', `✅ Post pubblicato! ID: ${publishData.id}`);
+      showToast('🎉 Post pubblicato su @joel86volley!', 'success');
+      CONFIG.postCount++;
+      document.getElementById('stat-posts').textContent = CONFIG.postCount;
+      addToHistory(caption, publishData.id);
+    }
+
+  } catch (err) {
+    log('err', 'Errore di rete: ' + err.message);
+    showToast('❌ Errore di connessione', 'error');
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📤 Pubblica ora';
+}
+
+function addToHistory(caption, postId) {
+  const history = document.getElementById('post-history');
+  const now = new Date();
+  const timeStr = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.style.cssText = 'padding:12px;background:var(--surface2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--success)';
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <span class="pill pill-green">✓ Pubblicato</span>
+      <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">${timeStr}</span>
+    </div>
+    <div style="font-size:12px;color:var(--muted)">${caption.substring(0,100)}...</div>
+    <div style="font-size:10px;color:var(--accent3);margin-top:4px;font-family:'DM Mono',monospace">ID: ${postId}</div>
+  `;
+  history.innerHTML = '';
+  history.appendChild(div);
+}
+
+// ============================================================
+// AI CAPTION GENERATOR
+// ============================================================
+async function generateCaption() {
+  const topic = document.getElementById('ai-topic').value.trim();
+  const tone = document.getElementById('ai-tone').value;
+  const format = document.getElementById('ai-format').value;
+
+  if (!topic) { showToast('⚠️ Inserisci l\'argomento del post', 'error'); return; }
+
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="ai-thinking"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div></div> Generando...';
+
+  document.getElementById('ai-result').style.display = 'block';
+  document.getElementById('ai-output').textContent = '✨ L\'AI sta scrivendo la tua caption...';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `Sei un esperto di social media per lo sport, specializzato in pallavolo italiana. 
+        Crei caption per Instagram per @joel86volley, un coach di pallavolo italiano.
+        Il pubblico è: pallavolisti 16-35 anni, allenatori, genitori di atleti in Italia.
+        Le caption devono essere in italiano, coinvolgenti, con emoji appropriate e hashtag rilevanti.
+        Formato richiesto: ${format}. Tono: ${tone}.
+        Includi sempre 8-12 hashtag in fondo. Non usare asterischi o markdown.`,
+        messages: [{ role: 'user', content: `Crea una caption Instagram per questo argomento: ${topic}` }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || 'Errore nella generazione.';
+    document.getElementById('ai-output').textContent = text;
+  } catch (err) {
+    document.getElementById('ai-output').textContent = 'Errore di connessione. Riprova.';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✨ Genera caption con AI';
+}
+
+function useCaption() {
+  const text = document.getElementById('ai-output').textContent;
+  document.getElementById('caption').value = text;
+  updatePreview();
+  showPanel('pubblica');
+  document.querySelector('nav button').click();
+  showToast('✓ Caption copiata nel form di pubblicazione!', 'success');
+}
+
+// ============================================================
+// TOKEN MANAGEMENT
+// ============================================================
+function saveToken() {
+  const token = document.getElementById('token-input').value.trim();
+  const userId = document.getElementById('user-id-input').value.trim();
+  if (token) { CONFIG.token = token; }
+  if (userId) { CONFIG.userId = userId; }
+  document.getElementById('token-preview').textContent = (CONFIG.token.substring(0, 20) + '... (configurato)');
+  showToast('✓ Configurazione salvata!', 'success');
+}
+
+async function testConnection() {
+  showToast('🔌 Test connessione in corso...', 'info');
+  try {
+    const res = await fetch(`https://graph.facebook.com/v19.0/${CONFIG.userId}?fields=id,username&access_token=${CONFIG.token}`);
+    const data = await res.json();
+    if (data.username) {
+      showToast(`✅ Connesso come @${data.username}`, 'success');
+      document.getElementById('stat-account').textContent = '@' + data.username;
+      document.getElementById('stat-status').style.color = 'var(--success)';
+    } else {
+      showToast('❌ Token non valido: ' + (data.error?.message || 'Errore sconosciuto'), 'error');
+    }
+  } catch {
+    showToast('❌ Errore di connessione', 'error');
+  }
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function log(type, msg) {
+  const logEl = document.getElementById('status-log');
+  const now = new Date().toLocaleTimeString('it-IT', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const div = document.createElement('div');
+  div.className = 'log-line';
+  div.innerHTML = `<span class="log-time">${now}</span><span class="log-${type}">${msg}</span>`;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.borderColor = type === 'success' ? '#06d6a044' : type === 'error' ? '#ff4d6d44' : '#4cc9f044';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Init
+updatePreview();
+</script>
+</body>
+</html>
