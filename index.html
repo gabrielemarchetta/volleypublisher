@@ -7,88 +7,71 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
-    --border: #ffffff12; --accent: #ff4d6d; --accent2: #ffd60a;
-    --accent3: #4cc9f0; --text: #f0f0f5; --muted: #6b6b80;
-    --success: #06d6a0; --warning: #ffd60a;
+    --bg:#0a0a0f;--surface:#12121a;--surface2:#1a1a26;--border:#ffffff12;
+    --accent:#ff4d6d;--accent2:#ffd60a;--accent3:#4cc9f0;--text:#f0f0f5;
+    --muted:#6b6b80;--success:#06d6a0;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:var(--bg); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
-  header {
-    position:sticky; top:0; z-index:100;
-    background:var(--bg); border-bottom:1px solid var(--border);
-    padding:0 32px; display:flex; align-items:center; justify-content:space-between; height:64px;
-  }
-  .logo { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:3px; display:flex; align-items:center; gap:10px; }
-  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); box-shadow:0 0 12px var(--accent); animation:pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-  .user-badge { display:flex; align-items:center; gap:8px; background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:6px 14px; font-size:13px; color:var(--muted); font-family:'DM Mono',monospace; }
-  .user-badge span { color:var(--accent3); }
-  nav { display:flex; gap:2px; padding:0 32px; border-bottom:1px solid var(--border); background:var(--bg); }
-  nav button { background:none; border:none; color:var(--muted); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; padding:14px 20px; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
-  nav button:hover { color:var(--text); }
-  nav button.active { color:var(--accent); border-bottom-color:var(--accent); }
-  main { padding:32px; max-width:1100px; margin:0 auto; }
-  .panel { display:none; }
-  .panel.active { display:block; animation:fadeIn 0.3s ease; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
-  .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:16px; }
-  .card-title { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
-  .card-title::before { content:''; width:3px; height:14px; background:var(--accent); border-radius:2px; }
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-  textarea, input[type="text"], select {
-    background:var(--surface2); border:1px solid var(--border); border-radius:8px;
-    color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px;
-    padding:12px 14px; width:100%; outline:none; transition:border-color 0.2s; resize:vertical;
-  }
-  textarea:focus, input:focus, select:focus { border-color:var(--accent3); }
-  label { font-size:12px; color:var(--muted); letter-spacing:1px; margin-bottom:6px; display:block; }
-  .btn { border:none; border-radius:8px; padding:12px 24px; cursor:pointer; font-family:'DM Mono',monospace; font-size:12px; letter-spacing:1px; text-transform:uppercase; transition:all 0.2s; display:inline-flex; align-items:center; gap:8px; }
-  .btn-primary { background:var(--accent); color:white; }
-  .btn-primary:hover { background:#ff2d50; transform:translateY(-1px); box-shadow:0 8px 24px rgba(255,77,109,0.3); }
-  .btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
-  .btn-secondary:hover { border-color:var(--accent3); color:var(--accent3); }
-  .btn-success { background:var(--success); color:#000; }
-  .btn:disabled { opacity:0.4; cursor:not-allowed; transform:none !important; }
-  .chip-wrap { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-  .chip { background:#1f6feb22; border:1px solid #1f6feb44; color:#58a6ff; border-radius:4px; padding:3px 8px; font-size:11px; font-family:'DM Mono',monospace; cursor:pointer; transition:all 0.15s; }
-  .chip:hover { background:#1f6feb44; }
-  .phone-wrap { display:flex; justify-content:center; padding:20px 0; }
-  .phone { width:260px; background:#000; border-radius:36px; border:6px solid #2a2a2a; overflow:hidden; box-shadow:0 40px 80px rgba(0,0,0,0.6); }
-  .phone-top { background:#1a1a1a; padding:8px 16px; display:flex; align-items:center; justify-content:space-between; }
-  .phone-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:12px; }
-  .phone-img { width:100%; aspect-ratio:1; background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); display:flex; align-items:center; justify-content:center; font-size:60px; position:relative; overflow:hidden; }
-  .phone-caption { background:#000; padding:10px 12px; }
-  .phone-caption-text { font-size:10px; color:#ccc; line-height:1.4; max-height:60px; overflow:hidden; }
-  #status-log { background:var(--surface2); border:1px solid var(--border); border-radius:8px; padding:14px; font-family:'DM Mono',monospace; font-size:12px; min-height:80px; max-height:200px; overflow-y:auto; line-height:1.8; }
-  .log-line { display:flex; gap:10px; }
-  .log-time { color:var(--muted); }
-  .log-ok { color:var(--success); }
-  .log-err { color:var(--accent); }
-  .log-info { color:var(--accent3); }
-  #toast { position:fixed; bottom:32px; right:32px; z-index:9999; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 20px; font-size:13px; box-shadow:0 20px 60px rgba(0,0,0,0.5); transform:translateY(20px); opacity:0; transition:all 0.3s; pointer-events:none; max-width:400px; }
-  #toast.show { transform:none; opacity:1; }
-  .ai-dot { width:6px; height:6px; border-radius:50%; background:var(--accent); animation:blink 1.2s infinite; display:inline-block; }
-  .ai-dot:nth-child(2){animation-delay:0.2s} .ai-dot:nth-child(3){animation-delay:0.4s}
-  @keyframes blink { 0%,100%{opacity:0.2} 50%{opacity:1} }
-  .divider { height:1px; background:var(--border); margin:20px 0; }
-  ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+  header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:64px;}
+  .logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;display:flex;align-items:center;gap:10px;}
+  .logo-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+  .user-badge{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--muted);font-family:'DM Mono',monospace;}
+  .user-badge span{color:var(--accent3);}
+  nav{display:flex;gap:2px;padding:0 32px;border-bottom:1px solid var(--border);background:var(--bg);}
+  nav button{background:none;border:none;color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;}
+  nav button.active{color:var(--accent);border-bottom-color:var(--accent);}
+  main{padding:32px;max-width:1100px;margin:0 auto;}
+  .panel{display:none;}.panel.active{display:block;animation:fadeIn 0.3s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
+  .card-title{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+  .card-title::before{content:'';width:3px;height:14px;background:var(--accent);border-radius:2px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  textarea,input[type="text"],select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;width:100%;outline:none;transition:border-color 0.2s;resize:vertical;}
+  textarea:focus,input:focus,select:focus{border-color:var(--accent3);}
+  label{font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:6px;display:block;}
+  .btn{border:none;border-radius:8px;padding:12px 24px;cursor:pointer;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1px;text-transform:uppercase;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary{background:var(--accent);color:white;}
+  .btn-primary:hover{background:#ff2d50;transform:translateY(-1px);}
+  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+  .btn-success{background:var(--success);color:#000;}
+  .btn:disabled{opacity:0.4;cursor:not-allowed;transform:none!important;}
+  .chip-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .chip{background:#1f6feb22;border:1px solid #1f6feb44;color:#58a6ff;border-radius:4px;padding:3px 8px;font-size:11px;font-family:'DM Mono',monospace;cursor:pointer;}
+  .chip:hover{background:#1f6feb44;}
+  .phone-wrap{display:flex;justify-content:center;padding:20px 0;}
+  .phone{width:260px;background:#000;border-radius:36px;border:6px solid #2a2a2a;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.6);}
+  .phone-top{background:#1a1a1a;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;}
+  .phone-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;}
+  .phone-img{width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460);display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden;background-size:cover;background-position:center;}
+  .phone-caption{background:#000;padding:10px 12px;}
+  .phone-caption-text{font-size:10px;color:#ccc;line-height:1.4;max-height:60px;overflow:hidden;}
+  #status-log{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px;font-family:'DM Mono',monospace;font-size:12px;min-height:80px;max-height:250px;overflow-y:auto;line-height:1.8;word-break:break-all;}
+  .log-line{display:flex;gap:10px;margin-bottom:2px;}
+  .log-time{color:var(--muted);white-space:nowrap;}
+  .log-ok{color:var(--success)}.log-err{color:var(--accent)}.log-info{color:var(--accent3)}
+  #toast{position:fixed;bottom:32px;right:32px;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 20px;font-size:13px;box-shadow:0 20px 60px rgba(0,0,0,0.5);transform:translateY(20px);opacity:0;transition:all 0.3s;pointer-events:none;max-width:420px;}
+  #toast.show{transform:none;opacity:1;}
+  .ai-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:blink 1.2s infinite;display:inline-block;margin:0 2px;}
+  .ai-dot:nth-child(2){animation-delay:0.2s}.ai-dot:nth-child(3){animation-delay:0.4s}
+  @keyframes blink{0%,100%{opacity:0.2}50%{opacity:1}}
+  .divider{height:1px;background:var(--border);margin:20px 0;}
+  ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
 </style>
 </head>
 <body>
-
 <header>
   <div class="logo"><div class="logo-dot"></div>VBCOACH PUBLISHER</div>
   <div class="user-badge">📱 <span>@joel86volley</span> · Creator</div>
 </header>
-
 <nav>
   <button class="active" onclick="showPanel('pubblica',this)">Pubblica</button>
   <button onclick="showPanel('ai',this)">AI Content</button>
   <button onclick="showPanel('calendario',this)">Calendario</button>
   <button onclick="showPanel('account',this)">Account</button>
 </nav>
-
 <main>
 
   <!-- PUBBLICA -->
@@ -98,13 +81,12 @@
         <div class="card">
           <div class="card-title">Crea post</div>
           <div style="margin-bottom:16px">
-            <label>TIPO DI CONTENUTO</label>
+            <label>TIPO</label>
             <select id="post-type" onchange="updateEmoji()">
               <option value="🏐">🏐 Tecnica volleyball</option>
               <option value="💪">💪 Motivazione</option>
               <option value="🎯">🎯 Esercizio / Drill</option>
               <option value="🛒">🛒 Prodotto / Promo</option>
-              <option value="📊">📊 Stats / Risultati</option>
             </select>
           </div>
           <div style="margin-bottom:16px">
@@ -128,16 +110,16 @@ Quanti di voi ci lavorano ogni allenamento? 👇
               <div class="chip" onclick="addHashtag('#volleyball')">#volleyball</div>
               <div class="chip" onclick="addHashtag('#coachlife')">#coachlife</div>
               <div class="chip" onclick="addHashtag('#allenamento')">#allenamento</div>
-              <div class="chip" onclick="addHashtag('#volley')">#volley</div>
               <div class="chip" onclick="addHashtag('#motivazione')">#motivazione</div>
               <div class="chip" onclick="addHashtag('#atleta')">#atleta</div>
-              <div class="chip" onclick="addHashtag('#teamwork')">#teamwork</div>
             </div>
           </div>
           <div style="margin-bottom:16px">
-            <label>URL IMMAGINE PUBBLICA (obbligatorio)</label>
-            <input type="text" id="image-url" placeholder="https://i.ibb.co/... oppure link Google Drive pubblico" oninput="updatePreview()">
-            <div style="font-size:11px;color:var(--muted);margin-top:6px">💡 Carica la foto su <a href="https://imgbb.com" target="_blank" style="color:var(--accent3)">imgbb.com</a> e incolla il link diretto qui</div>
+            <label>URL IMMAGINE PUBBLICA</label>
+            <input type="text" id="image-url" placeholder="https://i.ibb.co/..." oninput="updatePreview()">
+            <div style="font-size:11px;color:var(--muted);margin-top:6px">
+              💡 Carica su <a href="https://imgbb.com" target="_blank" style="color:var(--accent3)">imgbb.com</a> → copia "Direct link"
+            </div>
           </div>
           <div class="divider"></div>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
@@ -148,13 +130,13 @@ Quanti di voi ci lavorano ogni allenamento? 👇
         <div class="card">
           <div class="card-title">Log pubblicazione</div>
           <div id="status-log">
-            <div class="log-line"><span class="log-time">--:--</span><span class="log-info">Sistema pronto. Inserisci i dati e pubblica.</span></div>
+            <div class="log-line"><span class="log-time">--:--</span><span class="log-info">Pronto. Inserisci i dati e pubblica.</span></div>
           </div>
         </div>
       </div>
       <div>
         <div class="card">
-          <div class="card-title">Preview Instagram</div>
+          <div class="card-title">Preview</div>
           <div class="phone-wrap">
             <div class="phone">
               <div class="phone-top">
@@ -195,7 +177,6 @@ Quanti di voi ci lavorano ogni allenamento? 👇
   <div class="panel" id="panel-ai">
     <div class="card">
       <div class="card-title">AI Content Generator</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Descrivi il contenuto e l'AI genera la caption perfetta per il tuo pubblico pallavolo.</p>
       <div style="margin-bottom:12px">
         <label>ARGOMENTO DEL POST</label>
         <input type="text" id="ai-topic" placeholder="Es: esercizio per migliorare il servizio, motivazione pre-gara...">
@@ -211,7 +192,7 @@ Quanti di voi ci lavorano ogni allenamento? 👇
           </select>
         </div>
         <div>
-          <label>TIPO POST</label>
+          <label>FORMATO</label>
           <select id="ai-format">
             <option>Post singolo con lista</option>
             <option>Reel motivazionale</option>
@@ -237,293 +218,280 @@ Quanti di voi ci lavorano ogni allenamento? 👇
     <div class="card">
       <div class="card-title">Piano settimanale</div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">LUN</div><div style="font-size:18px;color:#21262d">—</div></div>
-        <div style="background:var(--surface2);border:1px solid #4cc9f044;border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">MAR</div><div style="font-size:18px">📱</div><div style="font-size:9px;color:var(--accent3);margin-top:4px">18:30<br>Tecnica</div></div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">MER</div><div style="font-size:18px;color:#21262d">—</div></div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">GIO</div><div style="font-size:18px;color:#21262d">—</div></div>
-        <div style="background:var(--surface2);border:1px solid #ff4d6d44;border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">VEN</div><div style="font-size:18px">📱</div><div style="font-size:9px;color:var(--accent);margin-top:4px">20:00<br>Motiv.</div></div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">SAB</div><div style="font-size:18px;color:#21262d">—</div></div>
-        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">DOM</div><div style="font-size:18px;color:#21262d">—</div></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">LUN</div><div style="font-size:18px;color:#333">—</div></div>
+        <div style="background:var(--surface2);border:1px solid #4cc9f044;border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">MAR</div><div style="font-size:18px">📱</div><div style="font-size:9px;color:var(--accent3);margin-top:4px">18:30 Tecnica</div></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">MER</div><div style="font-size:18px;color:#333">—</div></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">GIO</div><div style="font-size:18px;color:#333">—</div></div>
+        <div style="background:var(--surface2);border:1px solid #ff4d6d44;border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">VEN</div><div style="font-size:18px">📱</div><div style="font-size:9px;color:var(--accent);margin-top:4px">20:00 Motiv.</div></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">SAB</div><div style="font-size:18px;color:#333">—</div></div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center"><div style="font-size:10px;color:var(--muted);margin-bottom:6px">DOM</div><div style="font-size:18px;color:#333">—</div></div>
       </div>
     </div>
     <div class="card">
       <div class="card-title">Storico pubblicazioni</div>
-      <div id="post-history"><div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">Nessun post pubblicato ancora.</div></div>
+      <div id="post-history"><div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">Nessun post ancora.</div></div>
     </div>
   </div>
 
   <!-- ACCOUNT -->
   <div class="panel" id="panel-account">
     <div class="card">
-      <div class="card-title">Configurazione token Instagram</div>
+      <div class="card-title">Configurazione</div>
+      <div style="background:#ffd60a11;border:1px solid #ffd60a33;border-radius:8px;padding:12px;margin-bottom:16px;font-size:12px;color:#ffd60a">
+        ℹ️ Incolla qui il token dal <a href="https://developers.facebook.com/tools/debug/accesstoken/" target="_blank" style="color:#ffd60a">Debugger Meta</a> → clicca Salva → poi Testa
+      </div>
       <div style="margin-bottom:16px">
-        <label>ACCESS TOKEN</label>
-        <input type="text" id="token-input" placeholder="Incolla qui il token (inizia con IGAA...)">
+        <label>ACCESS TOKEN (copia dal Debugger Meta)</label>
+        <textarea id="token-input" rows="3" style="font-family:'DM Mono',monospace;font-size:11px" placeholder="IGAAU0tpm74c1BZAF..."></textarea>
       </div>
       <div style="margin-bottom:16px">
         <label>INSTAGRAM USER ID</label>
-        <input type="text" id="user-id-input" value="17841400406443635">
+        <input type="text" id="user-id-input" value="27195929310097976">
       </div>
       <div style="display:flex;gap:10px">
         <button class="btn btn-primary" onclick="saveToken()">💾 Salva</button>
         <button class="btn btn-secondary" onclick="testConnection()">🔌 Testa connessione</button>
       </div>
-      <div id="test-result" style="margin-top:14px;font-size:13px;display:none"></div>
+      <div id="test-result" style="margin-top:14px;font-size:13px;padding:10px;border-radius:6px;display:none"></div>
     </div>
     <div class="card">
-      <div class="card-title">⚠️ Note importanti</div>
+      <div class="card-title">Stato token</div>
       <div style="font-size:13px;color:var(--muted);line-height:2">
-        <p>• Il token scade tra <strong style="color:var(--text)">~2 mesi</strong>. Rinnovalo prima della scadenza.</p>
-        <p>• Per pubblicare serve un <strong style="color:var(--text)">URL pubblico</strong> dell'immagine — usa <a href="https://imgbb.com" target="_blank" style="color:var(--accent3)">imgbb.com</a> (gratuito)</p>
-        <p>• Token attuale: <span id="token-preview" style="color:var(--accent3);font-family:'DM Mono',monospace;font-size:11px">caricamento...</span></p>
+        <p>• Token salvato: <span id="token-preview" style="color:var(--accent3);font-family:'DM Mono',monospace;font-size:11px">nessuno</span></p>
+        <p>• User ID: <span style="color:var(--accent3);font-family:'DM Mono',monospace;font-size:11px" id="uid-preview">27195929310097976</span></p>
+        <p>• Il token scade ogni <strong style="color:var(--text)">60 giorni</strong></p>
+        <p>• Per le immagini usa <a href="https://imgbb.com" target="_blank" style="color:var(--accent3)">imgbb.com</a> → carica → copia "Direct link"</p>
       </div>
     </div>
   </div>
 
 </main>
-
 <div id="toast"></div>
 
 <script>
-// TOKEN — salvato in localStorage per persistenza
-const DEFAULT_TOKEN = 'IGAAU0tpm74c1BZAFotbU1YenNIbXFlSjdMM2p1T2UwX1ZAlWmw3T0ZATWlJrYXZA6aWtqSWQtVlhvb2JjVFVCV1ZASX0NwT3BwNE1rWU0xYVhBREV6bHRBY2VydlVMRUhidzJHTVpBa1ZAITkpGTC10TWtyQ1FvZA3NKeS1IX1JraDlzRQZDZD';
-const DEFAULT_UID = '17841400406443635';
+const DEFAULT_UID = '27195929310097976';
 
-function getToken() { return localStorage.getItem('ig_token') || DEFAULT_TOKEN; }
-function getUserId() { return localStorage.getItem('ig_uid') || DEFAULT_UID; }
+function getToken(){ return localStorage.getItem('ig_token') || ''; }
+function getUserId(){ return localStorage.getItem('ig_uid') || DEFAULT_UID; }
 
-// Mostra token preview
-document.getElementById('token-preview').textContent = getToken().substring(0,25) + '... (configurato)';
+// Aggiorna preview token
+function refreshTokenPreview(){
+  const t = getToken();
+  document.getElementById('token-preview').textContent = t ? t.substring(0,30)+'...' : 'nessuno — vai su Account e salva';
+  document.getElementById('uid-preview').textContent = getUserId();
+}
+refreshTokenPreview();
 
-function showPanel(name, btn) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + name).classList.add('active');
+function showPanel(name,btn){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
   if(btn) btn.classList.add('active');
 }
 
-function updatePreview() {
+function updatePreview(){
   const caption = document.getElementById('caption').value;
-  document.getElementById('preview-caption').textContent = caption.substring(0,120) + (caption.length > 120 ? '...' : '');
+  document.getElementById('preview-caption').textContent = caption.substring(0,120)+(caption.length>120?'...':'');
   const imgUrl = document.getElementById('image-url').value.trim();
-  const previewImg = document.getElementById('preview-img');
-  if (imgUrl) {
-    previewImg.style.backgroundImage = `url(${imgUrl})`;
-    previewImg.style.backgroundSize = 'cover';
-    previewImg.style.backgroundPosition = 'center';
-    document.getElementById('preview-emoji').style.display = 'none';
-  } else {
-    previewImg.style.backgroundImage = '';
-    document.getElementById('preview-emoji').style.display = 'block';
-  }
+  const pi = document.getElementById('preview-img');
+  const pe = document.getElementById('preview-emoji');
+  if(imgUrl){ pi.style.backgroundImage=`url(${imgUrl})`; pe.style.display='none'; }
+  else{ pi.style.backgroundImage=''; pe.style.display='block'; }
 }
 
-function updateEmoji() {
+function updateEmoji(){
   document.getElementById('preview-emoji').textContent = document.getElementById('post-type').value;
 }
 
-function addHashtag(tag) {
+function addHashtag(tag){
   const ta = document.getElementById('caption');
-  if (!ta.value.includes(tag)) {
-    ta.value += '\n' + tag;
-    updatePreview();
-  }
+  if(!ta.value.includes(tag)){ ta.value+='\n'+tag; updatePreview(); }
 }
 
-function copyCaption() {
+function copyCaption(){
   navigator.clipboard.writeText(document.getElementById('caption').value)
-    .then(() => showToast('✓ Caption copiata!', 'success'));
+    .then(()=>showToast('✓ Caption copiata!','success'));
 }
 
-// PUBBLICAZIONE
-async function publishNow() {
+// PUBBLICA
+async function publishNow(){
   const caption = document.getElementById('caption').value.trim();
   const imageUrl = document.getElementById('image-url').value.trim();
   const token = getToken();
   const userId = getUserId();
 
-  if (!caption) { showToast('⚠️ Scrivi una caption', 'error'); return; }
-  if (!imageUrl) { showToast('⚠️ Inserisci URL immagine pubblica', 'error'); return; }
+  if(!token){ showToast('⚠️ Prima vai su Account e salva il token!','error'); return; }
+  if(!caption){ showToast('⚠️ Scrivi una caption','error'); return; }
+  if(!imageUrl){ showToast('⚠️ Inserisci URL immagine pubblica','error'); return; }
 
   const btn = document.getElementById('btn-publish');
-  btn.disabled = true;
-  btn.textContent = '⏳ Pubblicazione...';
+  btn.disabled=true; btn.textContent='⏳ Pubblicazione...';
 
-  log('info', 'Avvio pubblicazione...');
-  log('info', 'Step 1: Creazione media container...');
+  log('info','Avvio pubblicazione su @joel86volley...');
+  log('info','UserID: '+userId);
+  log('info','Step 1: Creazione container media...');
 
-  try {
-    // Step 1: crea container
-    const r1 = await fetch(`https://graph.facebook.com/v19.0/${userId}/media`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        image_url: imageUrl,
-        caption: caption,
-        access_token: token
-      })
+  try{
+    const body1 = new URLSearchParams();
+    body1.append('image_url', imageUrl);
+    body1.append('caption', caption);
+    body1.append('access_token', token);
+
+    const r1 = await fetch(`https://graph.facebook.com/v19.0/${userId}/media`,{
+      method:'POST',
+      body: body1
     });
-
     const d1 = await r1.json();
-    log('info', 'Risposta container: ' + JSON.stringify(d1));
+    log('info','Risposta step 1: '+JSON.stringify(d1));
 
-    if (d1.error) {
-      log('err', 'Errore: ' + d1.error.message);
-      showToast('❌ ' + d1.error.message, 'error');
-      btn.disabled = false; btn.textContent = '📤 Pubblica ora';
+    if(d1.error){
+      log('err','❌ Errore step 1: '+d1.error.message+' (codice '+d1.error.code+')');
+      showToast('❌ '+d1.error.message,'error');
+      btn.disabled=false; btn.textContent='📤 Pubblica ora';
       return;
     }
 
-    log('ok', 'Container ID: ' + d1.id);
-    log('info', 'Step 2: Pubblicazione...');
+    log('ok','Container creato: '+d1.id);
+    log('info','Step 2: Pubblicazione post...');
 
-    // Step 2: pubblica
-    const r2 = await fetch(`https://graph.facebook.com/v19.0/${userId}/media_publish`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({
-        creation_id: d1.id,
-        access_token: token
-      })
+    const body2 = new URLSearchParams();
+    body2.append('creation_id', d1.id);
+    body2.append('access_token', token);
+
+    const r2 = await fetch(`https://graph.facebook.com/v19.0/${userId}/media_publish`,{
+      method:'POST',
+      body: body2
     });
-
     const d2 = await r2.json();
-    log('info', 'Risposta publish: ' + JSON.stringify(d2));
+    log('info','Risposta step 2: '+JSON.stringify(d2));
 
-    if (d2.error) {
-      log('err', 'Errore: ' + d2.error.message);
-      showToast('❌ ' + d2.error.message, 'error');
+    if(d2.error){
+      log('err','❌ Errore step 2: '+d2.error.message);
+      showToast('❌ '+d2.error.message,'error');
     } else {
-      log('ok', '✅ Pubblicato! Post ID: ' + d2.id);
-      showToast('🎉 Post pubblicato su @joel86volley!', 'success');
+      log('ok','✅ POST PUBBLICATO! ID: '+d2.id);
+      showToast('🎉 Post pubblicato su @joel86volley!','success');
       addToHistory(caption, d2.id);
     }
 
-  } catch(e) {
-    log('err', 'Errore rete: ' + e.message);
-    showToast('❌ Errore: ' + e.message, 'error');
+  } catch(e){
+    log('err','Errore rete: '+e.message);
+    showToast('❌ Errore: '+e.message,'error');
   }
 
-  btn.disabled = false;
-  btn.textContent = '📤 Pubblica ora';
+  btn.disabled=false; btn.textContent='📤 Pubblica ora';
 }
 
-function addToHistory(caption, postId) {
+function addToHistory(caption, postId){
   const h = document.getElementById('post-history');
   const now = new Date();
-  const t = now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
-  h.innerHTML = `<div style="padding:12px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--success)">
-    <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-      <span style="background:#06d6a022;color:var(--success);border:1px solid #06d6a044;border-radius:4px;padding:2px 8px;font-size:10px">✓ PUBBLICATO</span>
-      <span style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">${t}</span>
-    </div>
-    <div style="font-size:12px;color:var(--muted)">${caption.substring(0,100)}...</div>
-    <div style="font-size:10px;color:var(--accent3);margin-top:4px;font-family:'DM Mono',monospace">ID: ${postId}</div>
-  </div>` + h.innerHTML;
+  const t = now.toLocaleDateString('it-IT')+' '+now.toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'});
+  const div = document.createElement('div');
+  div.style.cssText='padding:12px;background:var(--surface2);border-radius:8px;margin-bottom:8px;border-left:3px solid var(--success)';
+  div.innerHTML=`<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="background:#06d6a022;color:var(--success);border:1px solid #06d6a044;border-radius:4px;padding:2px 8px;font-size:10px">✓ PUBBLICATO</span><span style="font-size:11px;color:var(--muted)">${t}</span></div><div style="font-size:12px;color:var(--muted)">${caption.substring(0,100)}...</div><div style="font-size:10px;color:var(--accent3);margin-top:4px">ID: ${postId}</div>`;
+  if(h.querySelector('div[style*="text-align"]')) h.innerHTML='';
+  h.prepend(div);
 }
 
-// AI CONTENT
-async function generateCaption() {
+// AI
+async function generateCaption(){
   const topic = document.getElementById('ai-topic').value.trim();
-  if (!topic) { showToast('⚠️ Inserisci l\'argomento', 'error'); return; }
-
+  if(!topic){ showToast('⚠️ Inserisci argomento','error'); return; }
   const btn = document.getElementById('btn-generate');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span> Generando...';
-
+  btn.disabled=true;
+  btn.innerHTML='<span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span> Generando...';
   const result = document.getElementById('ai-result');
   const output = document.getElementById('ai-output');
-  result.style.display = 'block';
-  output.textContent = '✨ Scrittura in corso...';
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: `Sei un esperto di social media per lo sport, specializzato in pallavolo italiana.
-Crei caption per Instagram per @joel86volley, un coach di pallavolo italiano a Messina.
-Il pubblico: pallavolisti 16-35 anni, allenatori, genitori di atleti in Italia.
-Caption in italiano, coinvolgenti, con emoji e 8-10 hashtag in fondo.
-Tono: ${document.getElementById('ai-tone').value}.
-Formato: ${document.getElementById('ai-format').value}.
-Non usare asterischi o markdown.`,
-        messages: [{ role: 'user', content: `Crea una caption Instagram per: ${topic}` }]
+  result.style.display='block';
+  output.textContent='✨ Scrittura in corso...';
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`Sei un esperto social media per la pallavolo italiana. Scrivi caption Instagram per @joel86volley, coach di pallavolo a Messina. Pubblico: pallavolisti 16-35 anni, allenatori, genitori. Italiano, con emoji, 8-10 hashtag in fondo. Tono: ${document.getElementById('ai-tone').value}. Formato: ${document.getElementById('ai-format').value}. Niente asterischi o markdown.`,
+        messages:[{role:'user',content:`Caption per: ${topic}`}]
       })
     });
     const data = await res.json();
-    output.textContent = data.content?.[0]?.text || 'Errore nella generazione.';
-  } catch(e) {
-    output.textContent = 'Errore connessione: ' + e.message;
+    output.textContent = data.content?.[0]?.text || 'Errore.';
+  } catch(e){
+    output.textContent='Errore: '+e.message;
   }
-
-  btn.disabled = false;
-  btn.textContent = '✨ Genera caption con AI';
+  btn.disabled=false; btn.textContent='✨ Genera caption con AI';
 }
 
-function useCaption() {
+function useCaption(){
   document.getElementById('caption').value = document.getElementById('ai-output').textContent;
   updatePreview();
   showPanel('pubblica', document.querySelector('nav button'));
-  document.querySelector('nav button').classList.add('active');
-  showToast('✓ Caption copiata nel form!', 'success');
+  showToast('✓ Caption copiata nel form!','success');
 }
 
-// TOKEN MANAGEMENT
-function saveToken() {
+// TOKEN
+function saveToken(){
   const t = document.getElementById('token-input').value.trim();
   const u = document.getElementById('user-id-input').value.trim();
-  if (t) { localStorage.setItem('ig_token', t); }
-  if (u) { localStorage.setItem('ig_uid', u); }
-  document.getElementById('token-preview').textContent = getToken().substring(0,25) + '... (salvato)';
-  showToast('✓ Token salvato!', 'success');
+  if(!t){ showToast('⚠️ Incolla prima il token','error'); return; }
+  localStorage.setItem('ig_token', t);
+  if(u) localStorage.setItem('ig_uid', u);
+  refreshTokenPreview();
+  document.getElementById('token-input').value='';
+  showToast('✓ Token salvato!','success');
 }
 
-async function testConnection() {
+async function testConnection(){
   const token = getToken();
   const userId = getUserId();
-  const resultEl = document.getElementById('test-result');
-  resultEl.style.display = 'block';
-  resultEl.textContent = '🔌 Test in corso...';
-  resultEl.style.color = 'var(--muted)';
+  const el = document.getElementById('test-result');
+  el.style.display='block';
+  el.style.background='var(--surface2)';
+  el.textContent='🔌 Test in corso...';
 
-  try {
+  if(!token){
+    el.textContent='⚠️ Nessun token salvato. Incolla il token e clicca Salva prima.';
+    el.style.color='var(--warning)';
+    return;
+  }
+
+  log('info','Test connessione con UID: '+userId);
+
+  try{
     const res = await fetch(`https://graph.facebook.com/v19.0/${userId}?fields=id,username,name&access_token=${token}`);
     const data = await res.json();
-    log('info', 'Test risposta: ' + JSON.stringify(data));
-    if (data.username) {
-      resultEl.textContent = `✅ Connesso come @${data.username} (ID: ${data.id})`;
-      resultEl.style.color = 'var(--success)';
-      showToast(`✅ Connesso come @${data.username}`, 'success');
+    log('info','Test risposta: '+JSON.stringify(data));
+    if(data.username){
+      el.textContent=`✅ Connesso come @${data.username} — pronto per pubblicare!`;
+      el.style.color='var(--success)';
+      showToast('✅ Connesso come @'+data.username,'success');
     } else {
-      resultEl.textContent = '❌ ' + (data.error?.message || 'Token non valido');
-      resultEl.style.color = 'var(--accent)';
-      showToast('❌ ' + (data.error?.message || 'Token non valido'), 'error');
+      el.textContent='❌ '+(data.error?.message||'Errore sconosciuto')+' (code: '+data.error?.code+')';
+      el.style.color='var(--accent)';
     }
-  } catch(e) {
-    resultEl.textContent = '❌ Errore: ' + e.message;
-    resultEl.style.color = 'var(--accent)';
+  } catch(e){
+    el.textContent='❌ Errore rete: '+e.message;
+    el.style.color='var(--accent)';
   }
 }
 
-function log(type, msg) {
-  const el = document.getElementById('status-log');
-  const now = new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  const div = document.createElement('div');
-  div.className = 'log-line';
-  div.innerHTML = `<span class="log-time">${now}</span><span class="log-${type}">${msg}</span>`;
+function log(type,msg){
+  const el=document.getElementById('status-log');
+  const now=new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const div=document.createElement('div');
+  div.className='log-line';
+  div.innerHTML=`<span class="log-time">${now}</span><span class="log-${type}">${msg}</span>`;
   el.appendChild(div);
-  el.scrollTop = el.scrollHeight;
+  el.scrollTop=el.scrollHeight;
 }
 
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.borderColor = type === 'success' ? '#06d6a044' : type === 'error' ? '#ff4d6d44' : '#4cc9f044';
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.borderColor=type==='success'?'#06d6a044':type==='error'?'#ff4d6d44':'#ffd60a44';
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 4000);
+  setTimeout(()=>t.classList.remove('show'),4000);
 }
 
 updatePreview();
